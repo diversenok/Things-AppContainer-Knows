@@ -166,17 +166,33 @@
         <DCCReference Include="NtUtils\NtUtils.Access.Expected.pas"/>
         <DCCReference Include="NtUtils\NtUtils.Files.pas"/>
         <DCCReference Include="NtUtils\NtUtils.Job.pas"/>
+        <DCCReference Include="NtUtils\NtUtils.Ldr.pas"/>
         <DCCReference Include="NtUtils\NtUtils.Objects.pas"/>
         <DCCReference Include="NtUtils\NtUtils.Processes.pas"/>
+        <DCCReference Include="NtUtils\NtUtils.Processes.Create.Win32.pas"/>
         <DCCReference Include="NtUtils\NtUtils.Processes.Memory.pas"/>
         <DCCReference Include="NtUtils\NtUtils.Processes.Query.pas"/>
+        <DCCReference Include="NtUtils\NtUtils.Profiles.pas"/>
+        <DCCReference Include="NtUtils\NtUtils.Registry.pas"/>
+        <DCCReference Include="NtUtils\NtUtils.Security.Acl.pas"/>
+        <DCCReference Include="NtUtils\NtUtils.Security.AppContainer.pas"/>
         <DCCReference Include="NtUtils\NtUtils.Security.Sid.pas"/>
         <DCCReference Include="NtUtils\NtUtils.System.pas"/>
         <DCCReference Include="NtUtils\NtUtils.SysUtils.pas"/>
         <DCCReference Include="NtUtils\NtUtils.Threads.pas"/>
+        <DCCReference Include="NtUtils\NtUtils.Tokens.pas"/>
+        <DCCReference Include="NtUtils\NtUtils.Tokens.Impersonate.pas"/>
+        <DCCReference Include="NtUtils\NtUtils.Tokens.Misc.pas"/>
+        <DCCReference Include="NtUtils\NtUtils.Tokens.Query.pas"/>
         <DCCReference Include="NtUtils\Headers\NtUtils.Version.pas"/>
         <DCCReference Include="NtUtils\NtUiLib\DelphiUiLib.HysteresisList.pas"/>
+        <DCCReference Include="NtUtils\NtUiLib\DelphiUiLib.Reflection.Numeric.pas"/>
         <DCCReference Include="NtUtils\NtUiLib\DelphiUiLib.Strings.pas"/>
+        <DCCReference Include="NtUtils\NtUiLib\NtUiLib.AccessMasks.pas"/>
+        <DCCReference Include="NtUtils\NtUiLib\NtUiLib.Exceptions.pas"/>
+        <DCCReference Include="NtUtils\NtUiLib\NtUiLib.Exceptions.Dialog.pas"/>
+        <DCCReference Include="NtUtils\NtUiLib\NtUiLib.Exceptions.Messages.pas"/>
+        <DCCReference Include="NtUtils\NtUiLib\NtUiLib.Exceptions.Report.pas"/>
         <DCCReference Include="NtUtils\NtUiLib\NtUiLib.Icons.pas"/>
         <DCCReference Include="LdrSnapshot.pas"/>
         <DCCReference Include="PsSnapshot.pas"/>
@@ -185,6 +201,10 @@
         <DCCReference Include="UI\MainForm.pas">
             <Form>FormMain</Form>
         </DCCReference>
+        <DCCReference Include="UI\MainForm.Logic.pas"/>
+        <RcCompile Include="NtUtils\NtUiLib\NtUiLib.Exceptions.Messages.rc">
+            <Form>NtUiLib.Exceptions.Messages.res</Form>
+        </RcCompile>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

@@ -6,19 +6,26 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls,
   VclEx.ListView, Vcl.StdCtrls, DelphiUiLib.HysteresisList, PsSnapshot,
-  Vcl.ExtCtrls, PsSnapshotThread, Vcl.AppEvnts;
+  Vcl.ExtCtrls, PsSnapshotThread, Vcl.AppEvnts, Vcl.Menus;
 
 type
   TFormMain = class(TForm)
     Pages: TPageControl;
     TabProcesses: TTabSheet;
     lvProcesses: TListViewEx;
-    lbProcesses: TLabel;
     AppEvents: TApplicationEvents;
+    MainMenu: TMainMenu;
+    cmProgram: TMenuItem;
+    cmAC: TMenuItem;
+    cmLPAC: TMenuItem;
+    StatusBar: TStatusBar;
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure AppEventsMinimize(Sender: TObject);
     procedure AppEventsRestore(Sender: TObject);
+    procedure AppEventsException(Sender: TObject; E: Exception);
+    procedure cmACClick(Sender: TObject);
+    procedure cmLPACClick(Sender: TObject);
   private
     Processes: THysteresisList<TProcessData>;
     FirstUpdate: Boolean;
@@ -38,7 +45,8 @@ var
 implementation
 
 uses
-  NtUiLib.Icons, NtUtils.Files, NtUtils.Threads;
+  NtUiLib.Icons, NtUtils.Files, NtUtils.Threads,NtUtils,
+  NtUiLib.Exceptions, NtUiLib.Exceptions.Dialog, MainForm.Logic;
 
 {$R *.dfm}
 
@@ -76,6 +84,11 @@ end;
 function CompareProcesses(const A, B: TProcessData): Boolean;
 begin
   Result := (A.PID = B.PID) and (A.NtFileName = B.NtFileName);
+end;
+
+procedure TFormMain.AppEventsException(Sender: TObject; E: Exception);
+begin
+  ShowNtxException(Handle, E);
 end;
 
 procedure TFormMain.AppEventsMinimize(Sender: TObject);
@@ -123,6 +136,18 @@ begin
   lvProcesses.Items[Index].Color := clRed;
 end;
 
+procedure TFormMain.cmACClick(Sender: TObject);
+begin
+  RestartAsAppContainer(False).RaiseOnError;;
+  Close;
+end;
+
+procedure TFormMain.cmLPACClick(Sender: TObject);
+begin
+  RestartAsAppContainer(True).RaiseOnError;
+  Close;
+end;
+
 procedure TFormMain.ColorItem(const Item: TProcessData; Index: Integer);
 begin
   with lvProcesses.Items[Index] do
@@ -162,9 +187,8 @@ begin
       ColorItem(Processes.Items[i].Data, i);
   end;
 
-  lbProcesses.Caption := Format('Showing: %d out of %d processes',
-    [Length(Snapshot.Processes),
-      Snapshot.ProcessInfo.Other.TotalNumberOfObjects]);
+  StatusBar.Panels[1].Text := Format('Processes: %d/%d', [Length(
+    Snapshot.Processes), Snapshot.ProcessInfo.Other.TotalNumberOfObjects]);
 
   FirstUpdate := False;
   lvProcesses.Items.EndUpdate;
@@ -180,6 +204,8 @@ begin
 end;
 
 procedure TFormMain.FormCreate(Sender: TObject);
+var
+  State: TRunningAs;
 begin
   NtxSetNameThread(NtCurrentThread, 'UI');
   lvProcesses.SmallImages := TProcessIcons.ImageList;
@@ -192,6 +218,15 @@ begin
 
   FirstUpdate := True;
   SnapshottingThread := TPsSnapshotThread.Create;
+
+  State := DetermineRunningState;
+  StatusBar.Panels[0].Text := RunningStateToString(State);
+
+  // Disable some menu items
+  if State >= raAppContainer then
+    cmAC.Enabled := False;
+  if State >= raLPAC then
+    cmLPAC.Enabled := False;
 end;
 
 end.
