@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls,
   VclEx.ListView, Vcl.StdCtrls, DelphiUiLib.HysteresisList, PsSnapshot,
-  Vcl.ExtCtrls, PsSnapshotThread, Vcl.AppEvnts, Vcl.Menus;
+  Vcl.ExtCtrls, WorkerThreads, Vcl.AppEvnts, Vcl.Menus, DelphiUtils.Events;
 
 type
   TFormMain = class(TForm)
@@ -19,6 +19,8 @@ type
     cmAC: TMenuItem;
     cmLPAC: TMenuItem;
     StatusBar: TStatusBar;
+    PopupMenu: TPopupMenu;
+    cmInspect: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure AppEventsMinimize(Sender: TObject);
@@ -26,10 +28,12 @@ type
     procedure AppEventsException(Sender: TObject; E: Exception);
     procedure cmACClick(Sender: TObject);
     procedure cmLPACClick(Sender: TObject);
+    procedure lvProcessesDblClick(Sender: TObject);
   private
     Processes: THysteresisList<TProcessData>;
     FirstUpdate: Boolean;
     SnapshottingThread: TPsSnapshotThread;
+    FClosingEvent: TNotifyEventHandler;
     procedure ColorItem(const Item: TProcessData; Index: Integer);
     procedure AtAddStart(const Item: TProcessData; Index: Integer);
     procedure AtAddFinish(const Item: TProcessData; Index: Integer);
@@ -37,6 +41,7 @@ type
     procedure AtRemoveFinish(const Item: TProcessData; Index: Integer);
   public
     procedure ConsumeSnapshot(Snapshot: TPsSnapshot);
+    property OnMainFormClosing: TNotifyEventHandler read FClosingEvent;
   end;
 
 var
@@ -46,7 +51,7 @@ implementation
 
 uses
   NtUiLib.Icons, NtUtils.Files, NtUtils.Threads,NtUtils, DelphiUiLib.Strings,
-  NtUiLib.Exceptions, NtUiLib.Exceptions.Dialog, MainForm.Logic;
+  NtUiLib.Exceptions, NtUiLib.Exceptions.Dialog, MainForm.Logic, ProcessForm;
 
 {$R *.dfm}
 
@@ -196,6 +201,7 @@ end;
 
 procedure TFormMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
+  OnMainFormClosing.Invoke(Self);
   NtxQueueApcThread(SnapshottingThread.Handle, RequestShutdown);
   NtxResumeThread(SnapshottingThread.Handle);
   SnapshottingThread.WaitFor;
@@ -227,6 +233,13 @@ begin
     cmAC.Enabled := False;
   if State >= raLPAC then
     cmLPAC.Enabled := False;
+end;
+
+procedure TFormMain.lvProcessesDblClick(Sender: TObject);
+begin
+  if Assigned(lvProcesses.Selected) then
+    with Processes[lvProcesses.Selected.Index] do
+      TFormProcessInfo.CreateForProcess(Self, Data).Show;
 end;
 
 end.

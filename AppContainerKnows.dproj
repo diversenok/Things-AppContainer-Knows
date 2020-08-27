@@ -196,12 +196,19 @@
         <DCCReference Include="NtUtils\NtUiLib\NtUiLib.Icons.pas"/>
         <DCCReference Include="LdrSnapshot.pas"/>
         <DCCReference Include="PsSnapshot.pas"/>
-        <DCCReference Include="PsSnapshotThread.pas"/>
+        <DCCReference Include="WorkerThreads.pas"/>
         <DCCReference Include="VclEx\VclEx.ListView.pas"/>
         <DCCReference Include="UI\MainForm.pas">
             <Form>FormMain</Form>
         </DCCReference>
         <DCCReference Include="UI\MainForm.Logic.pas"/>
+        <DCCReference Include="UI\ProcessForm.pas">
+            <Form>FormProcessInfo</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="TdSnapshot.pas"/>
+        <DCCReference Include="NtUtils\NtUtils.WinUser.pas"/>
+        <DCCReference Include="NtUtils\DelphiUtils.Events.pas"/>
         <RcCompile Include="NtUtils\NtUiLib\NtUiLib.Exceptions.Messages.rc">
             <Form>NtUiLib.Exceptions.Messages.res</Form>
         </RcCompile>

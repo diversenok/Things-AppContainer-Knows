@@ -19,10 +19,6 @@ type
     Flags: TProcessFlags;
   end;
 
-  TThreadData = record
-    PID: TProcessId;
-  end;
-
   TPsSnapshot = class
   private
     PidToIndex: TDictionary<TProcessId, Integer>;

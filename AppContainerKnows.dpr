@@ -74,10 +74,14 @@ uses
   NtUiLib.Icons in 'NtUtils\NtUiLib\NtUiLib.Icons.pas',
   LdrSnapshot in 'LdrSnapshot.pas',
   PsSnapshot in 'PsSnapshot.pas',
-  PsSnapshotThread in 'PsSnapshotThread.pas',
+  WorkerThreads in 'WorkerThreads.pas',
   VclEx.ListView in 'VclEx\VclEx.ListView.pas',
   MainForm in 'UI\MainForm.pas' {FormMain},
-  MainForm.Logic in 'UI\MainForm.Logic.pas';
+  MainForm.Logic in 'UI\MainForm.Logic.pas',
+  ProcessForm in 'UI\ProcessForm.pas' {FormProcessInfo},
+  TdSnapshot in 'TdSnapshot.pas',
+  NtUtils.WinUser in 'NtUtils\NtUtils.WinUser.pas',
+  DelphiUtils.Events in 'NtUtils\DelphiUtils.Events.pas';
 
 {$R *.res}
 

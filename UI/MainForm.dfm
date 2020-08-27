@@ -53,8 +53,10 @@ object FormMain: TFormMain
         GridLines = True
         ReadOnly = True
         RowSelect = True
+        PopupMenu = PopupMenu
         TabOrder = 0
         ViewStyle = vsReport
+        OnDblClick = lvProcessesDblClick
         ColoringItems = True
       end
     end
@@ -102,6 +104,15 @@ object FormMain: TFormMain
         Caption = 'Restart as LPAC'
         OnClick = cmLPACClick
       end
+    end
+  end
+  object PopupMenu: TPopupMenu
+    Left = 375
+    Top = 115
+    object cmInspect: TMenuItem
+      Caption = 'Inspect'
+      Default = True
+      ShortCut = 13
     end
   end
 end
