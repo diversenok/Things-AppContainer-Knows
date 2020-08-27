@@ -45,7 +45,7 @@ var
 implementation
 
 uses
-  NtUiLib.Icons, NtUtils.Files, NtUtils.Threads,NtUtils,
+  NtUiLib.Icons, NtUtils.Files, NtUtils.Threads,NtUtils, DelphiUiLib.Strings,
   NtUiLib.Exceptions, NtUiLib.Exceptions.Dialog, MainForm.Logic;
 
 {$R *.dfm}
@@ -114,7 +114,7 @@ begin
   begin
     Cell[0] := Item.ImageName;
     Cell[1] := IntToStr(Item.PID);
-    Hint := Item.NtFileName;
+    Hint := BuildHint('NT Filename', Item.NtFileName);
 
     if not FirstUpdate then
       Color := clLime

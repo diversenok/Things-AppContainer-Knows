@@ -51,7 +51,8 @@ const
 
 procedure SetWoW64Flag(var Process: TProcessData);
 begin
-  Include(Process.Flags, pfWoW64);
+  if Process.PID <> SYSTEM_PID then
+    Include(Process.Flags, pfWoW64);
 end;
 
 procedure SetDotNetFlag(var Process: TProcessData);
