@@ -15,7 +15,8 @@ type
   // The modules that are used to perform process snapshotting
   TBaseModules = class abstract
     class var Handles: array [TBaseModule] of IHandle;
-    class constructor Create;
+    class var Initialized: Boolean;
+    class procedure Initialize;
   end;
 
   TModuleData = record
@@ -41,7 +42,7 @@ uses
 
 { TBaseModules }
 
-class constructor TBaseModules.Create;
+class procedure TBaseModules.Initialize;
 const
   BaseNames: array [TBaseModule] of String = (
     '\SystemRoot\System32\ntdll.dll',
@@ -54,10 +55,15 @@ const
 var
   i: TBaseModule;
 begin
+  if Initialized then
+    Exit;
+
   for i := Low(TBaseModule) to High(TBaseModule) do
     if not NtxOpenFile(Handles[i], FILE_READ_DATA or FILE_READ_ATTRIBUTES,
       BaseNames[i]).IsSuccess then
       Handles[i] := nil;
+
+  Initialized := True;
 end;
 
 

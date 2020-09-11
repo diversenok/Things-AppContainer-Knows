@@ -21,6 +21,7 @@ type
     StatusBar: TStatusBar;
     PopupMenu: TPopupMenu;
     cmInspect: TMenuItem;
+    cmRenderer: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure AppEventsMinimize(Sender: TObject);
@@ -29,6 +30,7 @@ type
     procedure cmACClick(Sender: TObject);
     procedure cmLPACClick(Sender: TObject);
     procedure lvProcessesDblClick(Sender: TObject);
+    procedure cmRendererClick(Sender: TObject);
   private
     Processes: THysteresisList<TProcessData>;
     FirstUpdate: Boolean;
@@ -51,7 +53,8 @@ implementation
 
 uses
   NtUiLib.Icons, NtUtils.Files, NtUtils.Threads,NtUtils, DelphiUiLib.Strings,
-  NtUiLib.Exceptions, NtUiLib.Exceptions.Dialog, MainForm.Logic, ProcessForm;
+  NtUiLib.Exceptions, NtUiLib.Exceptions.Dialog, MainForm.Logic, ProcessForm,
+  NtUtils.Tokens.Impersonate;
 
 {$R *.dfm}
 
@@ -153,6 +156,12 @@ begin
   Close;
 end;
 
+procedure TFormMain.cmRendererClick(Sender: TObject);
+begin
+  RestertAsChromeRendered.RaiseOnError;
+  Close;
+end;
+
 procedure TFormMain.ColorItem(const Item: TProcessData; Index: Integer);
 begin
   with lvProcesses.Items[Index] do
@@ -222,9 +231,6 @@ begin
   Processes.OnRemoveStart := AtRemoveStart;
   Processes.OnRemoveFinish := AtRemoveFinish;
 
-  FirstUpdate := True;
-  SnapshottingThread := TPsSnapshotThread.Create;
-
   State := DetermineRunningState;
   StatusBar.Panels[0].Text := RunningStateToString(State);
 
@@ -233,6 +239,15 @@ begin
     cmAC.Enabled := False;
   if State >= raLPAC then
     cmLPAC.Enabled := False;
+  if State >= raChromeRenderer then
+    cmRenderer.Enabled := False;
+
+  // Drop bootrapping impersonation if necessary
+  if ParamStr(1) = PARAM_DROP_IMPERSONATION then
+    NtxSetThreadToken(NtCurrentThread, 0);
+
+  FirstUpdate := True;
+  SnapshottingThread := TPsSnapshotThread.Create;
 end;
 
 procedure TFormMain.lvProcessesDblClick(Sender: TObject);

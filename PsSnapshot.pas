@@ -73,7 +73,8 @@ end;
 
 procedure SetTerminatedFlag(var Process: TProcessData);
 begin
-  Include(Process.Flags, pfTerminated);
+  if Assigned(TBaseModules.Handles[kmNtdll]) then
+    Include(Process.Flags, pfTerminated);
 end;
 
 procedure SetImageName(var Process: TProcessData);
@@ -126,6 +127,7 @@ end;
 constructor TPsSnapshot.Create;
 begin
   PidToIndex := TDictionary<TProcessId, Integer>.Create;
+  TBaseModules.Initialize;
 end;
 
 destructor TPsSnapshot.Destroy;

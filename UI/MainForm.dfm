@@ -104,6 +104,10 @@ object FormMain: TFormMain
         Caption = 'Restart as LPAC'
         OnClick = cmLPACClick
       end
+      object cmRenderer: TMenuItem
+        Caption = 'Restart as Chrome Renderer'
+        OnClick = cmRendererClick
+      end
     end
   end
   object PopupMenu: TPopupMenu
